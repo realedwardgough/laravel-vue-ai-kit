@@ -5,6 +5,17 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { initializeTheme } from './composables/useAppearance';
+import { configureEcho } from '@laravel/echo-vue';
+
+configureEcho({
+    broadcaster: 'reverb',
+    wsHost: window.location.hostname,
+    wsPort: 8080,
+    wssPort: 8080,
+    forceTLS: false,
+    enabledTransports: ['ws', 'wss'],
+    debug: true,
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
