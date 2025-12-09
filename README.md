@@ -1,0 +1,1 @@
+A lightweight Laravel + Vue starter kit for building AI-powered apps using Google Gemini.
