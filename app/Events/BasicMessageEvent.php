@@ -12,17 +12,14 @@ class BasicMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public int $chatId;
-    public string $message;
-    
     /**
      * Create a new event instance.
      */
-    public function __construct($chatId, $message)
-    {
-        $this->chatId = $chatId;
-        $this->message = $message;
-    }
+    public function __construct(
+        public int $chatId,
+        public string $message
+    )
+    {}
 
     /**
      * Get the channels the event should broadcast on.
@@ -36,8 +33,28 @@ class BasicMessageEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs(): string
+    /**
+     * Get the data to broadcast on the channel
+     * 
+     * @return array{Example: string, Message: string}
+     */
+    public function broadcastWith(): array {
+
+        \Log::info("BroadcastOn fired", [
+            'channel' => "private-chat.{$this->chatId}",
+            'chatId'  => $this->chatId,
+            'message' => $this->message,
+        ]);
+
+        return [
+            'channel' => "private-chat.{$this->chatId}",
+            'chatId' => $this->chatId,
+            'Message' => $this->message,
+        ];
+    }
+
+    public function broadcastAs()
     {
-        return 'basic.message';
+        return 'BasicMessageEvent';
     }
 }

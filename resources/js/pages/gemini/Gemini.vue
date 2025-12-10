@@ -4,25 +4,9 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { ref } from "vue";
-import { useEcho } from "@laravel/echo-vue";
-
 import { echo } from '@laravel/echo-vue';
 
-console.log("Echo instance:", echo());
-
-const messages = ref<string[]>([]);
-
-// For now we'll hardcode the same chatId we used in the test route.
-const chatId = 1;
-
-useEcho(
-    `chat.${chatId}`,
-    "basic.message",
-    (e: { message: string }) => {
-        messages.value.push(e.message);
-        console.log(e);
-    },
-);
+// Laravel generic breadcrumbs for the page
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Gemini',
@@ -30,13 +14,29 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+/**
+ * Setup the variables required for the web socket
+ */
+const chatId = 1;
+const messages = ref<string[]>([]);
+const channel = echo().private(`chat.${chatId}`);
+
+// Confirm subscription to listener channel and begin listening
+channel.subscribed(() => {
+    console.log("Connected to channel.");
+});
+channel.listen(".BasicMessageEvent", (e: any) => {
+    console.log("Recieved:", e);
+    messages.value.push(e.Message);
+});
+
 </script>
 
 <template>
     <Head title="Dashboard" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-            <h1>Gemini Dashboard</h1>
+            <h1 class="text-xl">Gemini Dashboard</h1>
             <div>
                 <p>A lightweight Laravel + Vue starter kit for building AI-powered apps using Google Gemini.</p>
             </div>

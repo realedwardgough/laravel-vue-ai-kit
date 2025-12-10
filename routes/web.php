@@ -22,7 +22,7 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
  * Development Broadcast testing
  */
 Route::get('/test-broadcast', function () {
-    broadcast(new BasicMessageEvent('1', 'Test Message From the Server'));
+    broadcast(new BasicMessageEvent(1, 'This is a test.'));
     return 'Event Broadcast Sent.';
 });
 

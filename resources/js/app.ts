@@ -7,16 +7,6 @@ import { createApp, h } from 'vue';
 import { initializeTheme } from './composables/useAppearance';
 import { configureEcho } from '@laravel/echo-vue';
 
-configureEcho({
-    broadcaster: 'reverb',
-    wsHost: window.location.hostname,
-    wsPort: 8080,
-    wssPort: 8080,
-    forceTLS: false,
-    enabledTransports: ['ws', 'wss'],
-    debug: true,
-});
-
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -27,14 +17,24 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
-    },
-    progress: {
-        color: '#4B5563',
+
+        const vueApp = createApp({ render: () => h(App, props) })
+            .use(plugin);
+
+        // ⭐ THIS MUST BE INSIDE setup(), BEFORE mount()
+        configureEcho({
+            broadcaster: 'reverb',
+            wsHost: window.location.hostname,
+            wsPort: 8080,
+            wssPort: 8080,
+            forceTLS: false,
+            enabledTransports: ['ws', 'wss'],
+            debug: true,
+        });
+
+        vueApp.mount(el);
     },
 });
 
-// This will set light / dark mode on page load...
+// Set theme
 initializeTheme();
