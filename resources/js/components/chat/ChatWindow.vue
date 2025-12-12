@@ -56,7 +56,6 @@ watch(
                 <span class="status-indicator"></span>
                 <span id="status-text">{{ connectionMessage }}</span>
             </div>
-            <hr />
         </div>
         <div  ref="messagesContainer" id="messages">
             <div

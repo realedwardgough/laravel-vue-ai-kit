@@ -32,7 +32,7 @@ Route::get('/test-broadcast', function () {
     
     $testMessage = [
         'chat_id' => 1,
-        'content' => 'This is a test.',
+        'content' => 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
     ];
     
     broadcast(new BasicMessageEvent($testMessage['chat_id'], $testMessage['content']));

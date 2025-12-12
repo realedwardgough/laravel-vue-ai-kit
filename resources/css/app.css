@@ -176,7 +176,7 @@
  */
 .chat-window {
     padding: 20px;
-    height: 700px;
+    height: 750px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -187,13 +187,13 @@
     padding: 10px;
     margin-bottom: 10px;
     height: inherit;
+    max-height: 80%;
 }
 
 .message {
     padding: 10px;
-    margin: 5px 0;
-    background: white;
-    border-radius: 4px;
+    margin: 15px 0;
+    border-radius: 8px;
     max-width: 60%;
     word-wrap: break-word;
     width: fit-content;
@@ -207,7 +207,7 @@ input {
     border: 1px solid #80808033;
 }
 
-button {
+.chat-window button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -275,14 +275,11 @@ hr {
 }
 
 .user {
-    background: #d1ecf1;
+    background: hsl(0 0% 9%);
     margin-left: auto;
-    color: black;
 }
 
-.bot {
-    background: #202632;
-}
+.bot {}
 
 /* Markdown formatting styles */
 .message h1 {
@@ -412,4 +409,24 @@ hr {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+
+::-webkit-scrollbar{
+	width: 10px;
+}
+
+::-webkit-scrollbar-track-piece{
+	background-color: hsl(0 0% 3.9%);
+}
+
+::-webkit-scrollbar-thumb{
+	background-color: hsl(0 0% 3.9%);
+	outline: 2px solid #80808033;
+	outline-offset: -2px;
+	border: .1px solid #80808033;
+}
+
+::-webkit-scrollbar-thumb:hover{
+	background-color: #80808033;
 }
