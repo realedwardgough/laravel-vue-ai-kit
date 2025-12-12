@@ -24,9 +24,7 @@ return new class extends Migration
              */
             Schema::create('chats', function (Blueprint $table) {
                 $table->increments('id');
-                $table->foreignId('user_id')->constrained(
-                    'users', 'user_id',
-                );
+                $table->foreignId('user_id')->constrained()->cascadeOnDelete();
                 $table->timestamps();
             });
  
@@ -36,9 +34,7 @@ return new class extends Migration
              */
             Schema::create('messages', function (Blueprint $table) {
                 $table->increments('id');
-                $table->foreignId('chat_id')->constrained(
-                    'chats','chat_id',
-                );
+                $table->foreignId('chat_id')->constrained()->cascadeOnDelete();
                 $table->longText('content');
                 $table->integer('user_or_model');
                 $table->timestamps();

@@ -5,6 +5,8 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 
+
+
 // Laravel generic breadcrumbs for the page
 const breadcrumbs: BreadcrumbItem[] = [
     {

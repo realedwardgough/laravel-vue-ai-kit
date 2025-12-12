@@ -22,9 +22,7 @@ class MessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chat_id' => ['required'],
             'content' => ['required'],
-            'user_or_model' => ['required'],
         ];
     }
 }

@@ -37,3 +37,26 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+
+/**
+ * Chat and Message types
+ */
+export type Message = {
+    id: number;
+    chat_id: number;
+    content: string;
+    user_or_model: 1 | 2;
+    created_at: string;
+    updated_at: string;
+}
+export type Chat = {
+    id: number;
+    user_id: number;
+    created_at: string;
+    updated_at: string;
+    messages: Message[];
+}
+export interface ChatPageProps extends AppPageProps {
+    chat: Chat;
+}

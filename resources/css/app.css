@@ -176,7 +176,7 @@
  */
 .chat-window {
     padding: 20px;
-    height: -webkit-fill-available;
+    height: 700px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -187,9 +187,6 @@
     padding: 10px;
     margin-bottom: 10px;
     height: inherit;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
 }
 
 .message {
@@ -280,6 +277,7 @@ hr {
 .user {
     background: #d1ecf1;
     margin-left: auto;
+    color: black;
 }
 
 .bot {
