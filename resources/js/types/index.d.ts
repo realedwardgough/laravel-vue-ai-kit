@@ -56,7 +56,7 @@ export type Chat = {
     name?: stirng;
     created_at: string;
     updated_at: string;
-    messages?: Message[];
+    messages: Message[];
 }
 export interface ChatPageProps extends AppPageProps {
     chat: Chat;

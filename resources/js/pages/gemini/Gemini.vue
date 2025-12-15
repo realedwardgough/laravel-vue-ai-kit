@@ -4,6 +4,7 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem, ChatsPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { geminiChat } from '@/routes';
+import NewChatWindow from '@/components/chat/NewChatWindow.vue';
 
 //
 const page = usePage<ChatsPageProps>();
@@ -26,9 +27,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                     v-for="chat in page.props.chats" v-key="chat.id" :href="geminiChat(chat.id).url"
                     class="flex flex-row w-full p-2.5 hover:bg-accent"
                 >
-                    {{ chat.id }}
+                    {{ chat.name ?? chat.id }}
                 </Link>
             </ul>
+            <NewChatWindow />
         </div>
     </AppLayout>
 </template>

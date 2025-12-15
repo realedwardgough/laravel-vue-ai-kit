@@ -14,6 +14,7 @@ class MessageService
 
         // Retrieve or Create Chat
         $chat = Chat::firstOrCreate([
+            'id' => $data['chat_id'],
             'user_id' => auth()->id(),
         ]);
         

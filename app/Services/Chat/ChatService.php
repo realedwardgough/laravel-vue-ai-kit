@@ -24,6 +24,12 @@ class ChatService
             ->first();
     }
 
+    public function create() 
+    {
+        return Chat::create([
+            'user_id' => auth()->id(),
+        ]);
+    }
     public function delete(){}
 
 }

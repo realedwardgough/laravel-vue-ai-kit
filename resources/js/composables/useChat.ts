@@ -6,6 +6,7 @@ import { isThinking } from '@/composables/useChatState';
 
 //
 const form = useForm({
+    chat_id: 0,
     content: '',
 });
 
@@ -40,6 +41,7 @@ export function useChat(chat: Chat) {
     };
 
     const createUserMessage = () => {
+        form.chat_id = chat.id;
         form.post(sendMessage().url, {
             preserveScroll: true,
             onSuccess: () => {
@@ -53,6 +55,27 @@ export function useChat(chat: Chat) {
         form,
         sendUserMessage,
         receieveBotMessage,
+    };
+}
+
+export function newChat() {
+    const sendUserMessage = () => {
+        if (!form.content.trim()) return;
+        createUserMessage();
+    };
+
+    const createUserMessage = () => {
+        form.post(sendMessage().url, {
+            preserveScroll: true,
+            onSuccess: () => {
+                form.reset();
+            }
+        });
+    };
+
+    return {
+        form,
+        sendUserMessage,
     };
 }
 

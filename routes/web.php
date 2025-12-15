@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Chat\ChatController;
 use App\Http\Controllers\Chat\MessageController;
 use App\Models\Message;
 use Illuminate\Support\Facades\Route;
@@ -17,13 +18,16 @@ Route::get('/', [ViewController::class, 'landing'])->name('home');
  */
 Route::group(['middleware' => ['auth', 'verified']], function() {
     
-    // 
+    // Base routes
     Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
+
+    // Gemini specific routes
     Route::get('/gemini', [GeminiController::class, 'showAll'])->name('geminiShow');
     Route::get('gemini/chat/{chat}', [GeminiController::class,'showSingle'])->name('geminiChat');
 
-    //
-    Route::post('/chat', [MessageController::class, 'store'])->name('sendMessage');
+    // Chat specific routes
+    Route::post('/chat', [ChatController::class, 'store'])->name('createChat');
+    Route::post('/message', [MessageController::class, 'store'])->name('sendMessage');
 });
 
 /**

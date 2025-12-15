@@ -23,6 +23,7 @@ class MessageRequest extends FormRequest
     {
         return [
             'content' => ['required'],
+            'chat_id' => ['nullable', 'int'],
         ];
     }
 }
