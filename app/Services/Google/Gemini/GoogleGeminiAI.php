@@ -19,7 +19,6 @@ class GoogleGeminiAI
     )
     {
         $this->apiKey = config('services.gemini.key');
-        // $this->apiURL = "https://generativelanguage.googleapis.com/v1beta/models/{$this->apiModel}:generateContent";
     }
 
     /**
@@ -29,6 +28,9 @@ class GoogleGeminiAI
      */
     public function sendRequest(Chat $chat = null, string $message = '')
     {
+
+        // Handle the gemini data context
+        $this->formatGeminiData($chat, $message);
 
         // Process the request
         $ch = curl_init();
@@ -40,13 +42,7 @@ class GoogleGeminiAI
                 'Content-Type: application/json',
                 'x-goog-api-key:' . $this->apiKey,
             ],
-            CURLOPT_POSTFIELDS => json_encode([
-                'contents' => [
-                    'parts' => [
-                        'text' => $message,
-                    ],
-                ],
-            ])
+            CURLOPT_POSTFIELDS => json_encode($this->conversationData),
         ]);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -59,7 +55,8 @@ class GoogleGeminiAI
 
         // Format response to array
         $responseArray = json_decode($response,true);
-        $geminiResponse = $responseArray['candidates'][0]['content']['parts'][0]['text'];
+        $geminiResponse = $responseArray['candidates'][0]['content']['parts'][0]['text']
+            ?? 'Sorry, I could not generate a response.';
 
         // Broadcast message from gemini to the user
         broadcast(new BasicMessageEvent($chat->id, $geminiResponse));
@@ -70,6 +67,52 @@ class GoogleGeminiAI
             'content' => $geminiResponse,
             'user_or_model' => 2,
         ]);
+
+    }
+
+    /**
+     * Handle the gemini data context which is to be sent via cURL.
+     * This will include all available previous messages, if the exist.
+     * 
+     * @param Chat $chat
+     * @param string $message
+     * @return void
+     */
+    private function formatGeminiData(Chat $chat, string $message): void
+    {
+
+        // Fetch chat data
+        $handleChat = Chat::where('id', $chat->id)
+            ->with(['messages' => fn ($q) => $q->orderBy('created_at')])
+            ->first();
+        $messages = $handleChat->messages->take(-20);
+        
+        // If previous messages are available include them in the data context
+        if (!empty($messages) && $handleChat->messages->count() > 0) {
+            foreach ($messages as $previousMessage) {
+                $this->conversationData['contents'][] = [
+                    'role' => 1 === $previousMessage['user_or_model'] ? 'user' : 'model',
+                    'parts' => [
+                        ['text' => $previousMessage['content']]
+                    ]
+                ];
+            }
+        }
+
+        // Append the latest message into the data context from the user
+        $this->conversationData['contents'][] = [
+            'role' => 'user',
+            'parts' => [
+                ['text' => $message]
+            ]
+        ];
+
+        // Configure the gemini service
+        $this->conversationData['generationConfig'] = [
+            'temperature' => 0.7,
+            'topP' => 0.9,
+            'maxOutputTokens' => 1024,
+        ];
 
     }
 }
