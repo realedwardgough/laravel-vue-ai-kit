@@ -1,10 +1,11 @@
 import { echo } from '@laravel/echo-vue';
 import { ref } from 'vue';
+import { isThinking } from '@/composables/useChatState';
 
-type ConnectionStatus = 'connected' | 'diconnected' | 'error';
+type ConnectionStatus = 'connected' | 'disconnected' | 'error';
 type ConnectionMessage = 'Trying to connect...' | 'Connected' | 'Connection error';
 
-export const connectionStatus = ref<ConnectionStatus>('diconnected');
+export const connectionStatus = ref<ConnectionStatus>('disconnected');
 export const connectionMessage = ref<ConnectionMessage>('Trying to connect...');
 
 export function connect(
@@ -15,7 +16,7 @@ export function connect(
 
     // Connection error
     connection.error(() => {
-        connectionStatus.value = 'diconnected';
+        connectionStatus.value = 'disconnected';
         connectionMessage.value = 'Connection error';
     });
 
@@ -28,6 +29,13 @@ export function connect(
     // On broadcast recieved
     connection.listen('.BasicMessageEvent', (e: any) => {
         ReceieveBotMessage(e.Message);
+        isThinking.value = false;
+    });
+
+    // On broadcast recieved
+    connection.listen('.gemini.thinking', (e: any) => {
+        console.log(e);
+        isThinking.value = Boolean(e.thinking);
     });
 
     return {

@@ -9,7 +9,7 @@ use App\Models\Chat;
 
 class MessageService
 {
-    public function create($data): Message
+    public function create($data): Chat
     {
 
         // Retrieve or Create Chat
@@ -20,7 +20,10 @@ class MessageService
         // Push chat id into the message and return the model after creation
         $data['chat_id'] = $chat->id;
         $data['user_or_model'] = 1;
-        return Message::create($data);
+        Message::create($data);
+
+        // Return the chat record
+        return $chat;
 
     }
 

@@ -2,8 +2,9 @@
 import { onMounted, ref, nextTick, watch } from 'vue';
 import { ChatPageProps } from '@/types';
 import { usePage } from '@inertiajs/vue3';
-import { useChat } from '@/composables/useChat';
+import { useChat, formatMarkdown } from '@/composables/useChat';
 import { connect, connectionStatus, connectionMessage } from '@/composables/useEcho';
+import { isThinking } from '@/composables/useChatState';
 
 /**
  * Handle the chat prop to push into the useChat composable,
@@ -67,9 +68,11 @@ watch(
                     'bot': 2 === m.user_or_model,
                  }"
             >
-                {{ m.content }}
+                <div class="message-content" v-html="formatMarkdown(m.content)"></div>
             </div>
+            <div class="message bot" v-if="isThinking">Gemini is thinking...</div>
         </div>
+        
         <div class="input-container flex flex-row gap-1">
             <input
                 v-model="form.content"
