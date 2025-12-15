@@ -19,7 +19,8 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     
     // 
     Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
-    Route::get('/gemini', [GeminiController::class, 'show'])->name('geminiShow');
+    Route::get('/gemini', [GeminiController::class, 'showAll'])->name('geminiShow');
+    Route::get('gemini/chat/{chat}', [GeminiController::class,'showSingle'])->name('geminiChat');
 
     //
     Route::post('/chat', [MessageController::class, 'store'])->name('sendMessage');
