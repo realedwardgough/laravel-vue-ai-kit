@@ -16,7 +16,7 @@ const page = usePage<ChatPageProps>();
 const { messages, form, sendUserMessage, receieveBotMessage } = useChat(page.props.chat);
 const messagesContainer = ref<HTMLElement | null>(null);
 onMounted(() => {
-    connect('chat.1', receieveBotMessage);
+    connect('chat.'+page.props.chat.id, receieveBotMessage);
 });
 
 /**

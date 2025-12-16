@@ -14,6 +14,8 @@ export function connect(
 ) {
     const connection = echo().private(channel);
 
+    console.log('connection:', connection);
+
     // Connection error
     connection.error(() => {
         connectionStatus.value = 'disconnected';
@@ -27,15 +29,10 @@ export function connect(
     });
 
     // On broadcast recieved
-    connection.listen('.BasicMessageEvent', (e: any) => {
-        ReceieveBotMessage(e.Message);
-        isThinking.value = false;
-    });
-
-    // On broadcast recieved
-    connection.listen('.gemini.thinking', (e: any) => {
+    connection.listen('.response.event', (e: any) => {
         console.log(e);
-        isThinking.value = Boolean(e.thinking);
+        ReceieveBotMessage(e.message);
+        isThinking.value = false;
     });
 
     return {

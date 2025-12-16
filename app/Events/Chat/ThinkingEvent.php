@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Gemini;
+namespace App\Events\Chat;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GeminiResponseEvent
+class ThinkingEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

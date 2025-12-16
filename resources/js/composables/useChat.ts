@@ -30,6 +30,7 @@ export function useChat(chat: Chat) {
     };
 
     const receieveBotMessage = (text: string) => {
+        console.log('Add new message to the screen...');
         messages.value.push({ 
             id: 0,
             chat_id: chat.id,
