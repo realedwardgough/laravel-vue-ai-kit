@@ -24,7 +24,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <div class="flex h-screen flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <ul>
                 <Link 
-                    v-for="chat in page.props.chats" v-key="chat.id" :href="geminiChat(chat.id).url"
+                    v-for="chat in page.props.chats" v-bind:key="chat.id" :href="geminiChat(chat.id).url"
                     class="flex flex-row w-full p-2.5 hover:bg-accent"
                 >
                     {{ chat.name ?? chat.id }}
