@@ -26,15 +26,7 @@ class ResponseEvent implements ShouldBroadcastNow
     }
 
     public function broadcastWith(): array {
-
-        \Log::info("BroadcastOn fired", [
-            'channel' => "private-chat.{$this->chatId}",
-            'chatId'  => $this->chatId,
-            'message' => $this->message,
-        ]);
-
         return [
-            'channel' => "private-chat.{$this->chatId}",
             'chatId' => $this->chatId,
             'message' => $this->message,
         ];

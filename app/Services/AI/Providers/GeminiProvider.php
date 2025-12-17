@@ -6,9 +6,7 @@ namespace App\Services\AI\Providers;
 
 use App\Services\AI\Contracts\ChatProviderInterface;
 use App\Services\AI\DTO\ChatResponse;
-use App\Events\Chat\ResponseEvent;
 use App\Models\Chat;
-use App\Models\Message;
 
 class GeminiProvider implements ChatProviderInterface
 {
@@ -50,25 +48,15 @@ class GeminiProvider implements ChatProviderInterface
             throw new \RuntimeException("Gemini API failed ({$httpCode})");
         }
 
-        /**
-         * Format response to array
-         * @todo Create a new format method for handling this...
-         */
-        $responseArray = json_decode($response,true);
-        $geminiResponse = $responseArray['candidates'][0]['content']['parts'][0]['text']
-            ?? 'Sorry, I could not generate a response.';
+        // Format response to array
+        $formattedResponse = $this->handleResponse($response);
 
-        // Broadcast message from gemini to the user
-        broadcast(new ResponseEvent($chat->id, $geminiResponse));
-
-        // Create message in the message table
-        Message::create([
-            'chat_id' => $chat->id,
-            'content' => $geminiResponse,
-            'user_or_model' => 2,
+        \Log::info("Gemini Service: ", [
+            'Formatted_Response: ' => $formattedResponse,
+            'Response: ' => $response,
         ]);
         
-        return new ChatResponse($geminiResponse, 'gemini');
+        return new ChatResponse($formattedResponse['reply'], $formattedResponse['title'],'gemini');
     }
 
     /**
@@ -108,12 +96,85 @@ class GeminiProvider implements ChatProviderInterface
             ]
         ];
 
-        // Configure the gemini service
+        // Append confiuration and additional instructions
+        $this->config();
+        $this->systemInstructions();
+
+    }
+
+    /**
+     * Configure the Gemini service. This method will setup the maxoutput tokens. 
+     * If you wish to limit the potential costs of running this service, set a lower tokens output.
+     * 
+     * @return void
+     */
+    private function config(): void
+    {
         $this->conversationData['generationConfig'] = [
             'temperature' => 0.7,
             'topP' => 0.9,
             'maxOutputTokens' => 4096,
+            'responseMimeType' => 'application/json',
+        ];
+    }
+
+    /**
+     * Apply system instructions for the gemini service. This will accept pure text, and can be used to guide
+     * the AI how to respond, or the type of acions the service can handle. 
+     * 
+     * @return void
+     */
+    private function systemInstructions(): void
+    {
+        $path = base_path('/Settings/GeminiSystemInstructions.txt');
+
+        $this->conversationData['systemInstruction'] = [
+            'parts' => [[
+                'text' => <<<TEXT
+                        You are a chat assistant.
+
+                        For every response:
+                        1. Answer the user's message naturally.
+                        2. Generate a short, descriptive chat title (3–6 words) summarising the conversation so far.
+                        3. Respond ONLY in valid JSON with the following shape:
+
+                        {
+                        "reply": "string",
+                        "title": "string"
+                        }
+
+                        Do not include any additional text outside the JSON.
+                        TEXT
+            ]],
+        ];
+    }
+
+    /**
+     * Handle the gemini service response JSON. Format and handle the additional
+     * JSON data to accept the conversation response, plus the updated chat title.
+     * 
+     * @param string $rawResponse
+     * @return array
+     */
+    private function handleResponse(string $rawResponse): array
+    {
+        $responseArray = json_decode($rawResponse, true);
+        $text = $responseArray['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        $json = json_decode($text, true);
+
+        if (is_array($json)) {
+            return [
+                'title' => $json['title'] ?? null,
+                'reply' => $json['reply'] ?? '',
+            ];
+        }
+
+        // Treat as plain text response
+        return [
+            'title' => null,
+            'reply' => $text,
         ];
 
     }
+
 }

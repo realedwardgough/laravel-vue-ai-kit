@@ -8,6 +8,7 @@ class ChatResponse
 {
     public function __construct(
         public string $content,
+        public ?string $title = null,
         public ?string $model = null,
     ){}
 }
